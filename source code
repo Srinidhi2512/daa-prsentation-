@@ -1,0 +1,233 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <algorithm>
+
+using namespace std;
+
+class Student {
+public:
+    string name, dob, birthplace, motherName, fatherName, email, currentClass;
+    float annualFee, totalPaid, totalDue;
+
+    Student(string name, string dob, string birthplace, string motherName, 
+            string fatherName, string email, string currentClass, 
+            float annualFee, float totalPaid)
+        : name(name), dob(dob), birthplace(birthplace), 
+          motherName(motherName), fatherName(fatherName), email(email), 
+          currentClass(currentClass), annualFee(annualFee), 
+          totalPaid(totalPaid) {
+        totalDue = annualFee - totalPaid;
+    }
+
+    void display() const {
+        cout << "\n--- Student Details ---\n";
+        cout << "Name: " << name << endl;
+        cout << "Date of Birth: " << dob << endl;
+        cout << "Birthplace: " << birthplace << endl;
+        cout << "Mother's Name: " << motherName << endl;
+        cout << "Father's Name: " << fatherName << endl;
+        cout << "Email: " << email << endl;
+        cout << "Current Class: " << currentClass << endl;
+        cout << "Annual Fee: " << fixed << setprecision(2) << annualFee << endl;
+        cout << "Total Paid: " << fixed << setprecision(2) << totalPaid << endl;
+        cout << "Total Due: " << fixed << setprecision(2) << totalDue << endl;
+    }
+};
+
+class SchoolManagement {
+    vector<Student> students;
+
+    int binarySearch(const string& name) {
+        int left = 0, right = students.size() - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            if (students[mid].name == name) return mid;
+            if (students[mid].name < name) left = mid + 1;
+            else right = mid - 1;
+        }
+        return -1;
+    }
+
+public:
+    void addStudent() {
+        string name, dob, birthplace, motherName, fatherName, email, currentClass;
+        float annualFee, totalPaid;
+
+        cin.ignore();
+        cout << "Enter Student Name: ";
+        getline(cin, name);
+        cout << "Enter Date of Birth (DD/MM/YYYY): ";
+        getline(cin, dob);
+        cout << "Enter Birthplace: ";
+        getline(cin, birthplace);
+        cout << "Enter Mother's Name: ";
+        getline(cin, motherName);
+        cout << "Enter Father's Name: ";
+        getline(cin, fatherName);
+        cout << "Enter Email: ";
+        getline(cin, email);
+        cout << "Enter Current Class: ";
+        getline(cin, currentClass);
+        cout << "Enter Annual Fee: ";
+        cin >> annualFee;
+        cout << "Enter Total Paid: ";
+        cin >> totalPaid;
+
+        students.emplace_back(name, dob, birthplace, motherName, fatherName, email, currentClass, annualFee, totalPaid);
+        cout << "Student added successfully!\n";
+    }
+
+    void updateStudent() {
+        string name;
+        cin.ignore();
+        cout << "Enter Student Name to Update: ";
+        getline(cin, name);
+
+        int index = binarySearch(name);
+        if (index != -1) {
+            cout << "\nSelect the detail to update:\n";
+            cout << "1. Name\n";
+            cout << "2. Date of Birth\n";
+            cout << "3. Birthplace\n";
+            cout << "4. Mother's Name\n";
+            cout << "5. Father's Name\n";
+            cout << "6. Email\n";
+            cout << "7. Current Class\n";
+            cout << "8. Annual Fee\n";
+            cout << "9. Total Paid\n";
+            cout << "Enter your choice: ";
+            int choice;
+            cin >> choice;
+
+            switch (choice) {
+                case 1:
+                    cin.ignore();
+                    cout << "Enter New Name: ";
+                    getline(cin, students[index].name);
+                    break;
+                case 2:
+                    cin.ignore();
+                    cout << "Enter New Date of Birth (DD/MM/YYYY): ";
+                    getline(cin, students[index].dob);
+                    break;
+                case 3:
+                    cin.ignore();
+                    cout << "Enter New Birthplace: ";
+                    getline(cin, students[index].birthplace);
+                    break;
+                case 4:
+                    cin.ignore();
+                    cout << "Enter New Mother's Name: ";
+                    getline(cin, students[index].motherName);
+                    break;
+                case 5:
+                    cin.ignore();
+                    cout << "Enter New Father's Name: ";
+                    getline(cin, students[index].fatherName);
+                    break;
+                case 6:
+                    cin.ignore();
+                    cout << "Enter New Email: ";
+                    getline(cin, students[index].email);
+                    break;
+                case 7:
+                    cin.ignore();
+                    cout << "Enter New Current Class: ";
+                    getline(cin, students[index].currentClass);
+                    break;
+                case 8:
+                    cout << "Enter New Annual Fee: ";
+                    cin >> students[index].annualFee;
+                    students[index].totalDue = students[index].annualFee - students[index].totalPaid;
+                    break;
+                case 9:
+                    cout << "Enter New Total Paid: ";
+                    cin >> students[index].totalPaid;
+                    students[index].totalDue = students[index].annualFee - students[index].totalPaid;
+                    break;
+                default:
+                    cout << "Invalid choice. No updates made.\n";
+                    return;
+            }
+            cout << "Student details updated successfully!\n";
+        } else {
+            cout << "Student not found!\n";
+        }
+    }
+
+    void deleteStudent() {
+        string name;
+        cin.ignore();
+        cout << "Enter Student Name to Delete: ";
+        getline(cin, name);
+
+        int index = binarySearch(name);
+        if (index != -1) {
+            students.erase(students.begin() + index);
+            cout << "Student deleted successfully!\n";
+        } else {
+            cout << "Student not found!\n";
+        }
+    }
+
+    void bubbleSort() {
+        sort(students.begin(), students.end(), [](const Student& a, const Student& b) {
+            return a.name < b.name;
+        });
+        cout << "Students sorted by name.\n";
+        for (const auto& student : students) {
+            student.display();
+        }
+    }
+
+    void searchStudent() {
+        string name;
+        cin.ignore();
+        cout << "Enter Student Name to Search: ";
+        getline(cin, name);
+
+        int index = binarySearch(name);
+        if (index != -1) {
+            students[index].display();
+        } else {
+            cout << "Student not found!\n";
+        }
+    }
+
+    void displayMenu() {
+        cout << "\nSchool Management System Menu:\n";
+        cout << "1. Add Student\n";
+        cout << "2. Update Student\n";
+        cout << "3. Delete Student\n";
+        cout << "4. Sort Students by Name\n";
+        cout << "5. Search Student\n";
+        cout << "6. Exit\n";
+    }
+
+    void run() {
+        int choice;
+        while (true) {
+            displayMenu();
+            cout << "Enter your choice: ";
+            cin >> choice;
+
+            switch (choice) {
+                case 1: addStudent(); break;
+                case 2: updateStudent(); break;
+                case 3: deleteStudent(); break;
+                case 4: bubbleSort(); break;
+                case 5: searchStudent(); break;
+                case 6: cout << "Exiting the program. Goodbye!\n"; return;
+                default: cout << "Invalid choice. Please try again.\n";
+            }
+        }
+    }
+};
+
+int main() {
+    SchoolManagement system;
+    system.run();
+    return 0;
+}
